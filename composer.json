@@ -22,7 +22,9 @@
         "nilportugues/json-api": "^2.4"
     },
     "require-dev": {
-        "symfony/symfony": "^2.0|^3.0",
+        "symfony/http-kernel ": "^4.1",
+        "symfony/yaml ": "^4.1",
+        "symfony/psr-http-message-bridge": "^1.0",
         "friendsofphp/php-cs-fixer": "^1.9",
         "nilportugues/php_backslasher": "^0.2"
     },
