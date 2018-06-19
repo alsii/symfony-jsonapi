@@ -1,17 +1,17 @@
 services:
-    NilPortugues\Api\Mapping\Mapper: @nil_portugues.api.mapping.mapper
+    NilPortugues\Api\Mapping\Mapper: "@nil_portugues.api.mapping.mapper"
     nil_portugues.api.mapping.mapper:
           class: NilPortugues\Api\Mapping\Mapper
           arguments: []
 
-    NilPortugues\Api\JsonApi\JsonApiTransformer: @nil_portugues.api.json_api.json_api_transformer
+    NilPortugues\Api\JsonApi\JsonApiTransformer: "@nil_portugues.api.json_api.json_api_transformer"
     nil_portugues.api.json_api.json_api_transformer:
          class: NilPortugues\Api\JsonApi\JsonApiTransformer
          arguments:
             - "@nil_portugues.api.mapping.mapper"
             - "%nil_portugues.api.attributes_case%"
 
-    NilPortugues\Symfony\JsonApiBundle\Serializer\JsonApiSerializer: @nil_portugues.serializer.json_api_serializer
+    NilPortugues\Symfony\JsonApiBundle\Serializer\JsonApiSerializer: "@nil_portugues.serializer.json_api_serializer"
     nil_portugues.serializer.json_api_serializer:
          class: NilPortugues\Symfony\JsonApiBundle\Serializer\JsonApiSerializer
          arguments:
