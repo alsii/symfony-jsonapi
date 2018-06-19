@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Yaml\Yaml;
+use NilPortugues\Api\Mapping\Mapper;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -19,6 +20,7 @@ class NilPortuguesSymfonyJsonApiExtension extends Extension
 {
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -33,12 +35,13 @@ class NilPortuguesSymfonyJsonApiExtension extends Extension
 
     /**
      * @param ContainerBuilder $container
-     * @param                  $config
+     * @param $config
+     * @throws \ReflectionException
      */
     private function setMappings(ContainerBuilder $container, $config)
     {
         $definition = new Definition();
-        $definition->setClass('NilPortugues\Api\Mapping\Mapper');
+        $definition->setClass(Mapper::class);
         $args = $this->resolveMappings($container, $config['mappings']);
         $definition->setArguments($args);
         $definition->setLazy(true);
@@ -46,6 +49,12 @@ class NilPortuguesSymfonyJsonApiExtension extends Extension
         $container->setDefinition('nil_portugues.api.mapping.mapper', $definition);
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param $mappings
+     * @return array
+     * @throws \ReflectionException
+     */
     private function resolveMappings(ContainerBuilder $container, $mappings)
     {
         $loadedMappings = [];
@@ -82,12 +91,18 @@ class NilPortuguesSymfonyJsonApiExtension extends Extension
         $container->setParameter('nil_portugues.api.attributes_case', $config['attributes_case']);
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param $name
+     * @return null|string
+     * @throws \ReflectionException
+     */
     private function resolveBundle(ContainerBuilder $container, $name)
     {
         $bundles = $container->getParameter('kernel.bundles');
 
         if (!isset($bundles[$name])) {
-            return;
+            return null;
         }
 
         $class = $bundles[$name];

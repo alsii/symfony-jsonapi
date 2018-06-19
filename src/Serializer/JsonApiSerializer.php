@@ -15,10 +15,10 @@ use NilPortugues\Api\JsonApi\JsonApiTransformer;
 use NilPortugues\Api\Mapping\Mapping;
 use ReflectionClass;
 use RuntimeException;
-// use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
+
+/** @noinspection LongInheritanceChainInspection */
 
 /**
  * Class JsonApiSerializer
@@ -28,7 +28,8 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
 {
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface $router
+     * @throws \ReflectionException
      */
     public function __construct(JsonApiTransformer $transformer, RouterInterface $router)
     {
@@ -39,9 +40,10 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
 
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface $router
+     * @throws \ReflectionException
      */
-    private function mapUrls(JsonApiTransformer $transformer, Router $router)
+    private function mapUrls(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $request = Request::createFromGlobals();
         $baseUrl = $request->getSchemeAndHttpHost();
@@ -51,10 +53,13 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
         $reflectionProperty->setAccessible(true);
         $mappings = $reflectionProperty->getValue($transformer);
 
+        /** @noinspection AlterInForeachInspection */
         foreach ($mappings as &$mapping) {
             $mappingClass = new ReflectionClass($mapping);
 
+            /** @noinspection ReferenceMismatchInspection */
             $this->setUrlWithReflection($router, $mapping, $mappingClass, 'resourceUrlPattern', $baseUrl);
+            /** @noinspection ReferenceMismatchInspection */
             $this->setUrlWithReflection($router, $mapping, $mappingClass, 'selfUrl', $baseUrl);
 
             $mappingProperty = $mappingClass->getProperty('otherUrls');
@@ -63,6 +68,7 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
             if (empty($otherUrls)) {
                 $otherUrls = [];
             }
+            /** @noinspection AlterInForeachInspection */
             foreach ($otherUrls as &$url) {
                 $url = $this->getUrlPattern($router, $url, $baseUrl);
             }
@@ -74,7 +80,10 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
             if (empty($relationshipSelfUrl)) {
                 $relationshipSelfUrl = [];
             }
+            /** @noinspection AlterInForeachInspection */
             foreach ($relationshipSelfUrl as &$urlMember) {
+                /** @noinspection ReferenceMismatchInspection */
+                /** @noinspection AlterInForeachInspection */
                 foreach ($urlMember as &$url) {
                     $url = $this->getUrlPattern($router, $url, $baseUrl);
                 }
@@ -86,12 +95,13 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
     }
 
     /**
-     * @param Router          $router
-     * @param Mapping         $mapping
+     * @param RouterInterface $router
+     * @param Mapping $mapping
      * @param ReflectionClass $mappingClass
-     * @param string          $property
+     * @param string $property
+     * @param $baseUrl
      */
-    private function setUrlWithReflection(Router $router, Mapping $mapping, ReflectionClass $mappingClass, $property, $baseUrl)
+    private function setUrlWithReflection(RouterInterface $router, Mapping $mapping, ReflectionClass $mappingClass, $property, $baseUrl)
     {
         $mappingProperty = $mappingClass->getProperty($property);
         $mappingProperty->setAccessible(true);
@@ -101,25 +111,21 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
     }
 
     /**
-     * @param Router $router
+     * @param RouterInterface $router
      * @param string $routeNameFromMappingFile
      *
+     * @param $baseUrl
      * @return mixed
      *
-     * @throws RuntimeException
      */
-    private function getUrlPattern(Router $router, $routeNameFromMappingFile, $baseUrl)
+    private function getUrlPattern(RouterInterface $router, $routeNameFromMappingFile, $baseUrl)
     {
         if (!empty($routeNameFromMappingFile)) {
-            try {
-                $route = $router->getRouteCollection()->get($routeNameFromMappingFile);
-                if (empty($route)) {
-                    throw new Exception();
-                }
-            } catch (Exception $e) {
+            $route = $router->getRouteCollection()->get($routeNameFromMappingFile);
+            if (null === $route) {
                 throw new RuntimeException(
-                   \sprintf('Route \'%s\' has not been defined as a Symfony route.', $routeNameFromMappingFile)
-               );
+                    \sprintf('Route \'%s\' has not been defined as a Symfony route.', $routeNameFromMappingFile)
+                );
             }
 
             \preg_match_all('/{(.*?)}/', $route->getPath(), $matches);
