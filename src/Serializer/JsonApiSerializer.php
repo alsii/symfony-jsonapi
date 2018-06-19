@@ -15,7 +15,8 @@ use NilPortugues\Api\JsonApi\JsonApiTransformer;
 use NilPortugues\Api\Mapping\Mapping;
 use ReflectionClass;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
+// use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,7 +30,7 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
      * @param JsonApiTransformer $transformer
      * @param Router             $router
      */
-    public function __construct(JsonApiTransformer $transformer, Router $router)
+    public function __construct(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $this->mapUrls($transformer, $router);
 
