@@ -19,7 +19,7 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "nilportugues/json-api": "^2.4"
+        "nilportugues/json-api": "dev-master"
     },
     "require-dev": {
         "symfony/http-kernel ": "^4.1",
