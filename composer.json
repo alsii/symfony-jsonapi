@@ -17,16 +17,21 @@
             "NilPortugues\\Symfony\\JsonApiBundle\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/alsii/php-json-api.git"
+        }
+    ],
     "require": {
         "php": ">=5.5.0",
         "nilportugues/json-api": "dev-master"
     },
     "require-dev": {
-        "symfony/http-kernel ": "^4.1",
-        "symfony/yaml ": "^4.1",
+        "symfony/http-kernel": "^4.1",
+        "symfony/yaml": "^4.1",
         "symfony/psr-http-message-bridge": "^1.0",
-        "friendsofphp/php-cs-fixer": "^1.9",
-        "nilportugues/php_backslasher": "^0.2"
+        "friendsofphp/php-cs-fixer": "^2.12"
     },
     "config": {
         "preferred-install": "dist"
