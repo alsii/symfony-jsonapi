@@ -23,9 +23,11 @@
             "url": "https://github.com/alsii/php-json-api.git"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=5.5.0",
-        "nilportugues/json-api": "dev-master",
+        "nilportugues/json-api": "dev-master@dev",
         "symfony/config": "^4.1",
         "symfony/dependency-injection": "^4.1",
         "symfony/routing": "^4.1"
